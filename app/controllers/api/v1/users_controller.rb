@@ -1,6 +1,6 @@
 class Api::V1::UsersController < Api::V1::ApiV1BaseController
-  before_action :check_not_admin_user, only: [:show, :destroy, :update]
   before_action :set_record, only: [:show, :destroy, :update]
+  before_action :check_not_admin_user, only: [:destroy, :update]
 
   def index
     @q = User.ransack(params[:q])
@@ -9,7 +9,7 @@ class Api::V1::UsersController < Api::V1::ApiV1BaseController
     pagy, @users = pagy @q.result, items: params[:items], page: current_page
 
     render json: {
-      users:         serialize_columns( @users, %i[id name nickname image email]),
+      users:         serialize_columns( @users, %i[id name nickname image email role]),
       current_page:  pagy.page,
       total_page:    pagy.pages,
       total_count:   pagy.count
@@ -19,14 +19,14 @@ class Api::V1::UsersController < Api::V1::ApiV1BaseController
   end
 
   def show
-    render json: serialize_columns(@record, %i[id name nickname image email] ), status: :ok
+    render json: serialize_columns(@record, %i[id name nickname image email role] ), status: :ok
   end
 
   def update
 
     @record.attributes = record_params
     if @record.save
-      return render json: serialize_columns( @record, %i[id name nickname image email]) , status: :ok
+      return render json: serialize_columns( @record, %i[id name nickname image email role]) , status: :ok
     end
     render json: {errors: @record.errors.full_messages}, status: :bad_request
   end
@@ -39,15 +39,12 @@ class Api::V1::UsersController < Api::V1::ApiV1BaseController
   end
 
 
-
-  
   private
   def set_record
     @record = User.find_by_id(params[:id])
     return render json: { errors: [User.not_found_message] }, status: :not_found if @record.blank?
    
   end
-
 
   def record_params
     params[:user].permit( :name,

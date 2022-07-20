@@ -35,7 +35,7 @@ class ApplicationPolicy
   end
 
 
-  
+  protected
   def is_allowed?(action_name)
     @user.is_admin?
   end

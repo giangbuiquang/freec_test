@@ -1,10 +1,8 @@
 class Api::V1::ApiV1BaseController < ApplicationController
-  include Pundit
+  include Pundit::Authorization
   before_action :authenticate_user!
   before_action :_check_permission
   rescue_from Pundit::NotAuthorizedError, with: :_user_not_authorized
-  
-
   
   private
   def _user_not_authorized

@@ -8,7 +8,7 @@
 
 
 unless User.find_by_email "giang.buiquang@gmail.com"
-  User.create! :name => 'Giang', :email => 'giang.buiquang@gmail.com', :password => '123123A@', :password_confirmation => '123123A@', is_admin: true
+  User.create! :name => 'Giang', :email => 'giang.buiquang@gmail.com', :password => '123123A@', :password_confirmation => '123123A@', role: "admin"
 end
 
 (1..20).each do |i|
